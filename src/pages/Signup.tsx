@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,17 +7,38 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Heart, Sparkles, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
+import { useAuth } from "@/hooks/useAuth";
 
 const Signup = () => {
   const navigate = useNavigate();
+  const { signUp, user } = useAuth();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (user) {
+      navigate("/home");
+    }
+  }, [user, navigate]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast.success("Conta criada com sucesso!");
-    navigate("/login");
+    setLoading(true);
+
+    const { error } = await signUp(email, password, name);
+
+    if (error) {
+      toast.error(error.message === "User already registered" 
+        ? "Este email já está cadastrado" 
+        : "Erro ao criar conta");
+    } else {
+      toast.success("Conta criada com sucesso!");
+      navigate("/login");
+    }
+
+    setLoading(false);
   };
 
   return (
@@ -77,8 +98,8 @@ const Signup = () => {
                 className="bg-muted"
               />
             </div>
-            <Button type="submit" className="w-full">
-              Criar conta
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? "Criando conta..." : "Criar conta"}
             </Button>
           </form>
           <div className="mt-6 text-center">
