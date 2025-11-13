@@ -52,7 +52,7 @@ export const ProfileSetup = ({ open, onOpenChange, currentUsername, currentAvata
         .update({
           username: username.trim(),
           avatar_url: selectedAvatar,
-        })
+        } as any)
         .eq("id", user.id);
 
       if (error) {
