@@ -219,7 +219,7 @@ export const PrayerManager = () => {
                   <Input
                     id="audio"
                     type="file"
-                    accept="audio/mp3,audio/wav"
+                    accept="audio/mpeg,audio/wav,audio/mp3,.mp3,.wav"
                     onChange={(e) => setAudioFile(e.target.files?.[0] || null)}
                   />
                   {formData.audio_url && !audioFile && (

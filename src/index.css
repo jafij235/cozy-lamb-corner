@@ -8,35 +8,40 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 32 35% 94%;
-    --foreground: 30 10% 25%;
+    /* Cartoon-style colors - soft, vibrant, playful */
+    --background: 45 100% 97%;
+    --foreground: 240 20% 20%;
 
     --card: 0 0% 100%;
-    --card-foreground: 30 10% 25%;
+    --card-foreground: 240 20% 20%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 30 10% 25%;
+    --popover-foreground: 240 20% 20%;
 
-    --primary: 189 45% 62%;
+    /* Vibrant blue - playful and friendly */
+    --primary: 210 100% 65%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 32 25% 88%;
-    --secondary-foreground: 30 10% 25%;
+    /* Soft pastel yellow */
+    --secondary: 45 100% 85%;
+    --secondary-foreground: 240 20% 20%;
 
-    --muted: 32 20% 92%;
-    --muted-foreground: 30 8% 50%;
+    /* Soft pastel pink */
+    --muted: 340 100% 95%;
+    --muted-foreground: 240 15% 50%;
 
-    --accent: 189 45% 62%;
+    /* Vibrant green accent */
+    --accent: 150 80% 60%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84.2% 60.2%;
+    --destructive: 0 90% 65%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 32 15% 88%;
-    --input: 32 15% 90%;
-    --ring: 189 45% 62%;
+    --border: 240 20% 90%;
+    --input: 240 20% 95%;
+    --ring: 210 100% 65%;
 
-    --radius: 0.75rem;
+    --radius: 1.25rem;
 
     --sidebar-background: 0 0% 98%;
 

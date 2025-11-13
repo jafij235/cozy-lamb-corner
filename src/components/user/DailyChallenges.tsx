@@ -66,11 +66,11 @@ export const DailyChallenges = () => {
                   onCheckedChange={(checked) =>
                     handleToggle(challenge.id, checked as boolean)
                   }
-                  className="mt-1"
+                  className="mt-1 flex-shrink-0"
                 />
                 <label
                   htmlFor={challenge.id}
-                  className="flex-1 cursor-pointer"
+                  className="flex-1 cursor-pointer min-w-0"
                 >
                   <h4
                     className={`font-semibold mb-1 ${
@@ -88,7 +88,7 @@ export const DailyChallenges = () => {
                   </p>
                 </label>
                 {isCompleted && (
-                  <Flame className="w-5 h-5 text-primary animate-pulse" />
+                  <Flame className="w-5 h-5 text-primary animate-pulse flex-shrink-0" />
                 )}
               </div>
             </CardContent>
