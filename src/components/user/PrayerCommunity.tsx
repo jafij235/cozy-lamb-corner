@@ -3,14 +3,16 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Heart, Users, Flame, PlusCircle, Flag } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
+import { containsProfanity } from "@/lib/profanityFilter";
 
 const INTERACTIONS = [
-  { type: "pray", label: "Estou orando por você", icon: Heart },
+  { type: "pray", label: "Estou orando", icon: Heart },
   { type: "support", label: "Estou com você", icon: Users },
   { type: "peace", label: "Paz pra sua casa", icon: Heart },
   { type: "strength", label: "Permaneça firme", icon: Flame },
@@ -32,6 +34,7 @@ export const PrayerCommunity = () => {
         .from("prayer_requests")
         .select(`
           *,
+          profiles!inner(username, avatar_url),
           interactions(type, user_id)
         `)
         .order("created_at", { ascending: false });
@@ -115,6 +118,16 @@ export const PrayerCommunity = () => {
       return;
     }
 
+    if (/\d/.test(content)) {
+      toast.error("Números não são permitidos");
+      return;
+    }
+
+    if (containsProfanity(content)) {
+      toast.error("Por favor, use uma linguagem respeitosa");
+      return;
+    }
+
     createRequestMutation.mutate(content);
   };
 
@@ -144,12 +157,12 @@ export const PrayerCommunity = () => {
             <CardTitle>Comunidade de Oração</CardTitle>
             <Dialog open={open} onOpenChange={setOpen}>
               <DialogTrigger asChild>
-                <Button>
+                <Button className="rounded-full">
                   <PlusCircle className="w-4 h-4 mr-2" />
                   Pedir Oração
                 </Button>
               </DialogTrigger>
-              <DialogContent>
+              <DialogContent className="max-w-lg">
                 <DialogHeader>
                   <DialogTitle>Compartilhe seu Pedido de Oração</DialogTitle>
                 </DialogHeader>
@@ -158,16 +171,17 @@ export const PrayerCommunity = () => {
                     <Textarea
                       value={content}
                       onChange={(e) => setContent(e.target.value)}
-                      placeholder="Compartilhe seu pedido de oração... (máximo 700 caracteres)"
+                      placeholder="Compartilhe seu pedido de oração... (máximo 700 caracteres, sem links ou números)"
                       rows={6}
                       maxLength={700}
                       required
+                      className="resize-none"
                     />
                     <p className="text-xs text-muted-foreground mt-1 text-right">
                       {content.length}/700 caracteres
                     </p>
                   </div>
-                  <Button type="submit" className="w-full">
+                  <Button type="submit" className="w-full rounded-full">
                     Publicar Pedido
                   </Button>
                 </form>
@@ -180,6 +194,7 @@ export const PrayerCommunity = () => {
       {prayerRequests.length === 0 ? (
         <Card>
           <CardContent className="text-center py-12">
+            <Heart className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
             <p className="text-muted-foreground">
               Nenhum pedido de oração no momento. Seja o primeiro!
             </p>
@@ -187,11 +202,35 @@ export const PrayerCommunity = () => {
         </Card>
       ) : (
         prayerRequests.map((request: any) => (
-          <Card key={request.id}>
+          <Card key={request.id} className="overflow-hidden hover:shadow-lg transition-shadow">
             <CardContent className="p-6">
-              <p className="text-foreground mb-4 whitespace-pre-wrap">
+              <div className="flex items-start gap-3 mb-4">
+                <Avatar className="w-12 h-12 border-2 border-primary/20">
+                  <AvatarImage 
+                    src={request.profiles?.avatar_url} 
+                    alt={request.profiles?.username || "Usuário"} 
+                  />
+                  <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+                    {(request.profiles?.username || "U").charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-foreground">
+                    {request.profiles?.username || "Usuário"}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {new Date(request.created_at).toLocaleDateString("pt-BR", {
+                      day: "2-digit",
+                      month: "short",
+                    })}
+                  </p>
+                </div>
+              </div>
+              
+              <p className="text-foreground mb-4 whitespace-pre-wrap leading-relaxed">
                 {request.content}
               </p>
+              
               <div className="flex flex-wrap gap-2">
                 {INTERACTIONS.map(({ type, label, icon: Icon }) => {
                   const count = getInteractionCount(request.interactions, type);
@@ -206,10 +245,11 @@ export const PrayerCommunity = () => {
                         addInteractionMutation.mutate({ prayerRequestId: request.id, type })
                       }
                       disabled={hasInteracted}
+                      className="rounded-full"
                     >
                       <Icon className="w-4 h-4 mr-1" />
                       {label}
-                      {count > 0 && <span className="ml-1">({count})</span>}
+                      {count > 0 && <span className="ml-1 font-semibold">({count})</span>}
                     </Button>
                   );
                 })}
@@ -217,6 +257,7 @@ export const PrayerCommunity = () => {
                   variant="ghost"
                   size="sm"
                   onClick={() => handleReport(request.id)}
+                  className="rounded-full ml-auto"
                 >
                   <Flag className="w-4 h-4" />
                 </Button>
@@ -227,32 +268,23 @@ export const PrayerCommunity = () => {
       )}
 
       <Dialog open={reportOpen} onOpenChange={setReportOpen}>
-        <DialogContent>
+        <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Denunciar Conteúdo</DialogTitle>
+            <DialogTitle>Reportar Conteúdo</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <Textarea
               value={reportReason}
               onChange={(e) => setReportReason(e.target.value)}
-              placeholder="Por favor, descreva o motivo da denúncia..."
+              placeholder="Por que você está reportando este conteúdo?"
               rows={4}
-              required
+              className="resize-none"
             />
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setReportOpen(false);
-                  setReportReason("");
-                }}
-                className="flex-1"
-              >
+            <div className="flex gap-2 justify-end">
+              <Button variant="outline" onClick={() => setReportOpen(false)} className="rounded-full">
                 Cancelar
               </Button>
-              <Button onClick={submitReport} className="flex-1">
-                Enviar Denúncia
-              </Button>
+              <Button onClick={submitReport} className="rounded-full">Enviar Denúncia</Button>
             </div>
           </div>
         </DialogContent>

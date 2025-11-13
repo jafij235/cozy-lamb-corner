@@ -1,14 +1,40 @@
+import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Heart, BookOpen, Flame, Music, Users, LogOut } from "lucide-react";
+import { Heart, BookOpen, Flame, Music, Users, LogOut, UserCircle } from "lucide-react";
 import { PrayerList } from "@/components/user/PrayerList";
 import { DevotionalPlan } from "@/components/user/DevotionalPlan";
 import { DailyChallenges } from "@/components/user/DailyChallenges";
 import { PrayerCommunity } from "@/components/user/PrayerCommunity";
+import { ProfileSetup } from "@/components/user/ProfileSetup";
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
 
 const Home = () => {
   const { user, signOut } = useAuth();
+  const [profileOpen, setProfileOpen] = useState(false);
+
+  const { data: profile } = useQuery({
+    queryKey: ["profile", user?.id],
+    queryFn: async () => {
+      if (!user) return null;
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user,
+  });
+
+  useEffect(() => {
+    if (profile && !profile.username) {
+      setProfileOpen(true);
+    }
+  }, [profile]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -19,10 +45,16 @@ const Home = () => {
             <Heart className="w-6 h-6" />
             <span className="font-semibold text-lg">Jornada Espiritual</span>
           </div>
-          <Button variant="ghost" size="sm" onClick={signOut}>
-            <LogOut className="w-4 h-4 mr-2" />
-            Sair
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="sm" onClick={() => setProfileOpen(true)}>
+              <UserCircle className="w-4 h-4 mr-2" />
+              Perfil
+            </Button>
+            <Button variant="ghost" size="sm" onClick={signOut}>
+              <LogOut className="w-4 h-4 mr-2" />
+              Sair
+            </Button>
+          </div>
         </div>
       </header>
 
@@ -82,6 +114,13 @@ const Home = () => {
           </TabsContent>
         </Tabs>
       </main>
+
+      <ProfileSetup 
+        open={profileOpen} 
+        onOpenChange={setProfileOpen}
+        currentUsername={profile?.username}
+        currentAvatar={profile?.avatar_url}
+      />
     </div>
   );
 };
