@@ -8,40 +8,40 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Cartoon-style colors - soft, vibrant, playful */
-    --background: 45 100% 97%;
-    --foreground: 240 20% 20%;
+    /* Soft cartoon pastels - super cute and friendly! */
+    --background: 210 100% 98%;
+    --foreground: 240 10% 25%;
 
     --card: 0 0% 100%;
-    --card-foreground: 240 20% 20%;
+    --card-foreground: 240 10% 25%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 240 20% 20%;
+    --popover-foreground: 240 10% 25%;
 
-    /* Vibrant blue - playful and friendly */
-    --primary: 210 100% 65%;
+    /* Soft sky blue - gentle and calming */
+    --primary: 200 80% 70%;
     --primary-foreground: 0 0% 100%;
 
-    /* Soft pastel yellow */
-    --secondary: 45 100% 85%;
-    --secondary-foreground: 240 20% 20%;
+    /* Peachy pink - warm and friendly */
+    --secondary: 15 100% 85%;
+    --secondary-foreground: 240 10% 25%;
 
-    /* Soft pastel pink */
-    --muted: 340 100% 95%;
-    --muted-foreground: 240 15% 50%;
+    /* Lavender mist - dreamy and soft */
+    --muted: 250 60% 95%;
+    --muted-foreground: 240 10% 50%;
 
-    /* Vibrant green accent */
-    --accent: 150 80% 60%;
-    --accent-foreground: 0 0% 100%;
+    /* Mint green - fresh and playful */
+    --accent: 160 70% 75%;
+    --accent-foreground: 240 10% 25%;
 
-    --destructive: 0 90% 65%;
+    --destructive: 0 80% 70%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 240 20% 90%;
-    --input: 240 20% 95%;
-    --ring: 210 100% 65%;
+    --border: 220 30% 92%;
+    --input: 220 30% 96%;
+    --ring: 200 80% 70%;
 
-    --radius: 1.25rem;
+    --radius: 1.5rem;
 
     --sidebar-background: 0 0% 98%;
 
@@ -61,33 +61,33 @@ All colors MUST be HSL.
   }
 
   .dark {
-    --background: 30 15% 15%;
-    --foreground: 32 35% 94%;
+    --background: 250 30% 12%;
+    --foreground: 250 20% 92%;
 
-    --card: 30 18% 20%;
-    --card-foreground: 32 35% 94%;
+    --card: 250 25% 16%;
+    --card-foreground: 250 20% 92%;
 
-    --popover: 30 18% 20%;
-    --popover-foreground: 32 35% 94%;
+    --popover: 250 25% 16%;
+    --popover-foreground: 250 20% 92%;
 
-    --primary: 189 45% 62%;
+    --primary: 200 70% 60%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 30 12% 25%;
-    --secondary-foreground: 32 35% 94%;
+    --secondary: 280 40% 30%;
+    --secondary-foreground: 250 20% 92%;
 
-    --muted: 30 12% 25%;
-    --muted-foreground: 32 20% 65%;
+    --muted: 250 20% 22%;
+    --muted-foreground: 250 15% 65%;
 
-    --accent: 189 45% 62%;
+    --accent: 160 60% 55%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 62.8% 50%;
+    --destructive: 0 70% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 30 12% 25%;
-    --input: 30 12% 25%;
-    --ring: 189 45% 62%;
+    --border: 250 20% 22%;
+    --input: 250 20% 22%;
+    --ring: 200 70% 60%;
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
