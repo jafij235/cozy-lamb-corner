@@ -108,6 +108,16 @@ export const PrayerCommunity = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (!user) {
+      toast.error("Você precisa estar logado para publicar");
+      return;
+    }
+    
+    if (content.trim().length < 10) {
+      toast.error("Compartilhe mais sobre seu pedido (mínimo 10 caracteres)");
+      return;
+    }
+    
     if (content.length > 700) {
       toast.error("Seu pedido deve ter no máximo 700 caracteres");
       return;
@@ -151,13 +161,16 @@ export const PrayerCommunity = () => {
 
   return (
     <div className="space-y-4">
-      <Card>
+      <Card className="hover-lift">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle>Comunidade de Oração</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <Heart className="h-6 w-6 text-primary animate-pulse-soft" />
+              Comunidade de Oração
+            </CardTitle>
             <Dialog open={open} onOpenChange={setOpen}>
               <DialogTrigger asChild>
-                <Button className="rounded-full">
+                <Button className="rounded-full hover-bounce">
                   <PlusCircle className="w-4 h-4 mr-2" />
                   Pedir Oração
                 </Button>
@@ -181,8 +194,8 @@ export const PrayerCommunity = () => {
                       {content.length}/700 caracteres
                     </p>
                   </div>
-                  <Button type="submit" className="w-full rounded-full">
-                    Publicar Pedido
+                  <Button type="submit" className="w-full rounded-full hover-bounce" disabled={createRequestMutation.isPending}>
+                    {createRequestMutation.isPending ? "Publicando..." : "Publicar Pedido"}
                   </Button>
                 </form>
               </DialogContent>
@@ -202,7 +215,7 @@ export const PrayerCommunity = () => {
         </Card>
       ) : (
         prayerRequests.map((request: any) => (
-          <Card key={request.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+          <Card key={request.id} className="overflow-hidden hover-lift">
             <CardContent className="p-6">
               <div className="flex items-start gap-3 mb-4">
                 <Avatar className="w-12 h-12 border-2 border-primary/20">
@@ -245,7 +258,7 @@ export const PrayerCommunity = () => {
                         addInteractionMutation.mutate({ prayerRequestId: request.id, type })
                       }
                       disabled={hasInteracted}
-                      className="rounded-full"
+                      className="rounded-full hover-wiggle"
                     >
                       <Icon className="w-4 h-4 mr-1" />
                       {label}

@@ -9,18 +9,18 @@ import { toast } from "sonner";
 import { validateUsername } from "@/lib/profanityFilter";
 
 const CARTOON_AVATARS = [
-  // Male avatars
-  { id: "boy1", url: "https://api.dicebear.com/7.x/fun-emoji/svg?seed=boy1&backgroundColor=b6e3f4", gender: "male" },
-  { id: "boy2", url: "https://api.dicebear.com/7.x/fun-emoji/svg?seed=boy2&backgroundColor=d1d4f9", gender: "male" },
-  { id: "boy3", url: "https://api.dicebear.com/7.x/fun-emoji/svg?seed=boy3&backgroundColor=ffd5dc", gender: "male" },
-  { id: "boy4", url: "https://api.dicebear.com/7.x/fun-emoji/svg?seed=boy4&backgroundColor=c0aede", gender: "male" },
-  { id: "boy5", url: "https://api.dicebear.com/7.x/fun-emoji/svg?seed=boy5&backgroundColor=ffdfbf", gender: "male" },
-  // Female avatars
-  { id: "girl1", url: "https://api.dicebear.com/7.x/fun-emoji/svg?seed=girl1&backgroundColor=ffd5dc", gender: "female" },
-  { id: "girl2", url: "https://api.dicebear.com/7.x/fun-emoji/svg?seed=girl2&backgroundColor=c0aede", gender: "female" },
-  { id: "girl3", url: "https://api.dicebear.com/7.x/fun-emoji/svg?seed=girl3&backgroundColor=b6e3f4", gender: "female" },
-  { id: "girl4", url: "https://api.dicebear.com/7.x/fun-emoji/svg?seed=girl4&backgroundColor=ffdfbf", gender: "female" },
-  { id: "girl5", url: "https://api.dicebear.com/7.x/fun-emoji/svg?seed=girl5&backgroundColor=d1d4f9", gender: "female" },
+  // Male avatars - rostos humanos cartoon
+  { id: "boy1", url: "https://api.dicebear.com/7.x/adventurer/svg?seed=Felix&backgroundColor=b6e3f4", gender: "male" },
+  { id: "boy2", url: "https://api.dicebear.com/7.x/adventurer/svg?seed=Aneka&backgroundColor=d1d4f9", gender: "male" },
+  { id: "boy3", url: "https://api.dicebear.com/7.x/adventurer/svg?seed=Max&backgroundColor=ffd5dc", gender: "male" },
+  { id: "boy4", url: "https://api.dicebear.com/7.x/adventurer/svg?seed=Leo&backgroundColor=c0aede", gender: "male" },
+  { id: "boy5", url: "https://api.dicebear.com/7.x/adventurer/svg?seed=Simon&backgroundColor=ffdfbf", gender: "male" },
+  // Female avatars - rostos humanos cartoon
+  { id: "girl1", url: "https://api.dicebear.com/7.x/adventurer/svg?seed=Luna&backgroundColor=ffd5dc", gender: "female" },
+  { id: "girl2", url: "https://api.dicebear.com/7.x/adventurer/svg?seed=Sophie&backgroundColor=c0aede", gender: "female" },
+  { id: "girl3", url: "https://api.dicebear.com/7.x/adventurer/svg?seed=Mia&backgroundColor=b6e3f4", gender: "female" },
+  { id: "girl4", url: "https://api.dicebear.com/7.x/adventurer/svg?seed=Zoe&backgroundColor=ffdfbf", gender: "female" },
+  { id: "girl5", url: "https://api.dicebear.com/7.x/adventurer/svg?seed=Emma&backgroundColor=d1d4f9", gender: "female" },
 ];
 
 interface ProfileSetupProps {
@@ -102,10 +102,10 @@ export const ProfileSetup = ({ open, onOpenChange, currentUsername, currentAvata
                 <button
                   key={avatar.id}
                   onClick={() => setSelectedAvatar(avatar.url)}
-                  className={`relative rounded-full overflow-hidden border-4 transition-all hover:scale-110 ${
+                  className={`relative rounded-full overflow-hidden border-4 transition-all hover-bounce ${
                     selectedAvatar === avatar.url
-                      ? "border-primary shadow-lg"
-                      : "border-border"
+                      ? "border-primary shadow-lg animate-pulse-soft"
+                      : "border-border hover:border-primary/50"
                   }`}
                 >
                   <img
@@ -121,7 +121,7 @@ export const ProfileSetup = ({ open, onOpenChange, currentUsername, currentAvata
             </p>
           </div>
 
-          <Button onClick={handleSave} disabled={saving} className="w-full">
+          <Button onClick={handleSave} disabled={saving} className="w-full hover-bounce">
             {saving ? "Salvando..." : "Salvar Perfil"}
           </Button>
         </div>
