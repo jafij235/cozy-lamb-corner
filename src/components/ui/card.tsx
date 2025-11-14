@@ -1,10 +1,27 @@
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
+import { useAudioFeedback } from "@/hooks/useAudioFeedback";
 
-const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("rounded-lg border bg-card text-card-foreground shadow-sm transition-all duration-200 hover-lift", className)} {...props} />
-));
+const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
+  ({ className, onMouseEnter, ...props }, ref) => {
+    const { playHover } = useAudioFeedback();
+    
+    const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
+      playHover();
+      onMouseEnter?.(e);
+    };
+    
+    return (
+      <div 
+        ref={ref} 
+        className={cn("rounded-lg border bg-card text-card-foreground shadow-sm transition-all duration-200 hover-lift", className)} 
+        onMouseEnter={handleMouseEnter}
+        {...props} 
+      />
+    );
+  }
+);
 Card.displayName = "Card";
 
 const CardHeader = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(

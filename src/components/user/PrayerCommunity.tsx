@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { containsProfanity } from "@/lib/profanityFilter";
+import { useAudioFeedback } from "@/hooks/useAudioFeedback";
 
 const INTERACTIONS = [
   { type: "pray", label: "Estou orando", icon: Heart },
@@ -26,21 +27,41 @@ export const PrayerCommunity = () => {
   const [reportReason, setReportReason] = useState("");
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const { playSuccess } = useAudioFeedback();
 
   const { data: prayerRequests = [] } = useQuery({
     queryKey: ["prayer-requests"],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data: requests, error } = await supabase
         .from("prayer_requests")
-        .select(`
-          *,
-          profiles!inner(username, avatar_url),
-          interactions(type, user_id)
-        `)
+        .select("*")
         .order("created_at", { ascending: false });
       
       if (error) throw error;
-      return data;
+      
+      // Fetch profiles and interactions separately
+      const requestsWithData = await Promise.all(
+        (requests || []).map(async (request) => {
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select("username, avatar_url")
+            .eq("id", request.user_id)
+            .single();
+          
+          const { data: interactions } = await supabase
+            .from("interactions")
+            .select("type, user_id")
+            .eq("prayer_request_id", request.id);
+          
+          return {
+            ...request,
+            profiles: profile,
+            interactions: interactions || []
+          };
+        })
+      );
+      
+      return requestsWithData;
     },
   });
 
@@ -56,6 +77,7 @@ export const PrayerCommunity = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["prayer-requests"] });
+      playSuccess();
       toast.success("Pedido de oração publicado!");
       setOpen(false);
       setContent("");
