@@ -43,6 +43,10 @@ All colors MUST be HSL.
 
     --radius: 1.5rem;
 
+    /* Animações cartoon */
+    --bounce-duration: 0.6s;
+    --wiggle-duration: 0.5s;
+
     --sidebar-background: 0 0% 98%;
 
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -106,5 +110,70 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  /* Animação bounce suave */
+  @keyframes bounce-soft {
+    0%, 100% {
+      transform: translateY(0) scale(1);
+    }
+    50% {
+      transform: translateY(-8px) scale(1.02);
+    }
+  }
+
+  /* Animação wiggle */
+  @keyframes wiggle {
+    0%, 100% {
+      transform: rotate(0deg);
+    }
+    25% {
+      transform: rotate(-3deg);
+    }
+    75% {
+      transform: rotate(3deg);
+    }
+  }
+
+  /* Pulse suave */
+  @keyframes pulse-soft {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.05);
+    }
+  }
+
+  .animate-bounce-soft {
+    animation: bounce-soft var(--bounce-duration) ease-in-out;
+  }
+
+  .animate-wiggle {
+    animation: wiggle var(--wiggle-duration) ease-in-out;
+  }
+
+  .animate-pulse-soft {
+    animation: pulse-soft 2s ease-in-out infinite;
+  }
+
+  /* Hover animations */
+  .hover-bounce:hover {
+    animation: bounce-soft var(--bounce-duration) ease-in-out;
+  }
+
+  .hover-wiggle:hover {
+    animation: wiggle var(--wiggle-duration) ease-in-out;
+  }
+
+  .hover-lift {
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
   }
 }
