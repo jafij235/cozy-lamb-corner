@@ -30,6 +30,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setUser(session?.user ?? null);
         
         if (session?.user) {
+          // Register login when user signs in
+          if (event === "SIGNED_IN") {
+            setTimeout(async () => {
+              try {
+                const ipResponse = await fetch("https://api.ipify.org?format=json");
+                const { ip } = await ipResponse.json();
+                
+                await supabase.rpc("register_login", {
+                  _user_id: session.user.id,
+                  _ip_address: ip,
+                  _user_agent: navigator.userAgent,
+                });
+              } catch (error) {
+                console.error("Error registering login:", error);
+              }
+            }, 0);
+          }
+
           // Check if user is admin after state update
           setTimeout(async () => {
             try {

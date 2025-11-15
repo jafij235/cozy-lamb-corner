@@ -1,11 +1,14 @@
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Shield, BookOpen, Flame, Music, Flag, LogOut } from "lucide-react";
+import { Shield, BookOpen, Flame, Music, Flag, LogOut, Users, Activity, MessageSquare } from "lucide-react";
 import { ModerationManager } from "@/components/admin/ModerationManager";
 import { DevotionalManager } from "@/components/admin/DevotionalManager";
 import { ChallengeManager } from "@/components/admin/ChallengeManager";
 import { PrayerManager } from "@/components/admin/PrayerManager";
+import { AccountsManager } from "@/components/admin/AccountsManager";
+import { LoginMonitor } from "@/components/admin/LoginMonitor";
+import { CommunityModeration } from "@/components/admin/CommunityModeration";
 
 const Admin = () => {
   const { signOut } = useAuth();
@@ -38,10 +41,22 @@ const Admin = () => {
         </div>
 
         <Tabs defaultValue="moderacao" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-7">
             <TabsTrigger value="moderacao">
               <Flag className="w-4 h-4 mr-2" />
               Moderação
+            </TabsTrigger>
+            <TabsTrigger value="contas">
+              <Users className="w-4 h-4 mr-2" />
+              Contas
+            </TabsTrigger>
+            <TabsTrigger value="logins">
+              <Activity className="w-4 h-4 mr-2" />
+              Logins
+            </TabsTrigger>
+            <TabsTrigger value="comunidade">
+              <MessageSquare className="w-4 h-4 mr-2" />
+              Comunidade
             </TabsTrigger>
             <TabsTrigger value="devocionais">
               <BookOpen className="w-4 h-4 mr-2" />
@@ -59,6 +74,18 @@ const Admin = () => {
 
           <TabsContent value="moderacao" className="mt-6">
             <ModerationManager />
+          </TabsContent>
+
+          <TabsContent value="contas" className="mt-6">
+            <AccountsManager />
+          </TabsContent>
+
+          <TabsContent value="logins" className="mt-6">
+            <LoginMonitor />
+          </TabsContent>
+
+          <TabsContent value="comunidade" className="mt-6">
+            <CommunityModeration />
           </TabsContent>
 
           <TabsContent value="devocionais" className="mt-6">
