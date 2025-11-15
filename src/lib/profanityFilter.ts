@@ -1,19 +1,51 @@
 // Lista de palavras proibidas em português
 const profanityList = [
-  "merda", "bosta", "porra", "caralho", "puta", "putaria", "foda", "foder",
-  "cu", "buceta", "penis", "piroca", "pênis", "tesão", "tesao", "cacete",
+  "merda", "bosta", "porra", "caralho", "puta", "putaria", "foda", "foder", "foda-se", "fodase",
+  "cu", "buceta", "penis", "piroca", "pênis", "tesão", "tesao", "cacete", "vagina",
   "cuzao", "cuzão", "fdp", "pqp", "inferno", "diabo", "satanas", "satanás",
   "droga", "maconha", "cocaina", "cocaína", "crack", "heroina", "heroína",
+  "aborto", "idiota", "cagar", "bunda", "imensa", "sexo", "pinto", "pau",
+  "saco", "bolas", "rola", "baleia"
 ];
 
-export function containsProfanity(text: string): boolean {
-  const normalizedText = text.toLowerCase()
+// Mapa de substituições de números por letras
+const numberSubstitutions: Record<string, string> = {
+  '0': 'o',
+  '1': 'i',
+  '3': 'e',
+  '4': 'a',
+  '5': 's',
+  '7': 't',
+  '8': 'b',
+  '@': 'a',
+  '$': 's'
+};
+
+// Substitui números e símbolos por letras
+function normalizeText(text: string): string {
+  let normalized = text.toLowerCase()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, ""); // Remove acentos
   
+  // Substitui números e símbolos por letras correspondentes
+  Object.entries(numberSubstitutions).forEach(([num, letter]) => {
+    normalized = normalized.replace(new RegExp(num, 'g'), letter);
+  });
+  
+  // Remove espaços, hífens e underscores para detectar palavras disfarçadas
+  normalized = normalized.replace(/[\s\-_]/g, '');
+  
+  return normalized;
+}
+
+export function containsProfanity(text: string): boolean {
+  const normalizedText = normalizeText(text);
+  
   return profanityList.some(word => {
-    const normalizedWord = word.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    const regex = new RegExp(`\\b${normalizedWord}\\b`, "i");
+    const normalizedWord = normalizeText(word);
+    
+    // Verifica se a palavra aparece no texto (com ou sem limites de palavra)
+    const regex = new RegExp(normalizedWord, "i");
     return regex.test(normalizedText);
   });
 }
