@@ -100,6 +100,36 @@ export type Database = {
           },
         ]
       }
+      login_sessions: {
+        Row: {
+          id: string
+          ip_address: string
+          is_active: boolean
+          last_activity: string
+          login_at: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          ip_address: string
+          is_active?: boolean
+          last_activity?: string
+          login_at?: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          id?: string
+          ip_address?: string
+          is_active?: boolean
+          last_activity?: string
+          login_at?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       prayer_requests: {
         Row: {
           content: string
@@ -227,7 +257,18 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      user_login_stats: {
+        Row: {
+          email: string | null
+          ip_addresses: string[] | null
+          last_login: string | null
+          total_logins: number | null
+          unique_ips: number | null
+          user_id: string | null
+          username: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       has_role: {
@@ -236,6 +277,10 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      register_login: {
+        Args: { _ip_address: string; _user_agent?: string; _user_id: string }
+        Returns: string
       }
     }
     Enums: {
