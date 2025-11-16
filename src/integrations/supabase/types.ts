@@ -271,6 +271,7 @@ export type Database = {
       }
     }
     Functions: {
+      contains_profanity: { Args: { _t: string }; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -278,10 +279,12 @@ export type Database = {
         }
         Returns: boolean
       }
+      normalize_text: { Args: { _t: string }; Returns: string }
       register_login: {
         Args: { _ip_address: string; _user_agent?: string; _user_id: string }
         Returns: string
       }
+      unaccent: { Args: { "": string }; Returns: string }
     }
     Enums: {
       app_role: "admin" | "user"
