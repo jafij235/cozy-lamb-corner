@@ -4,7 +4,7 @@ const profanityList = [
   "cu", "buceta", "penis", "piroca", "pênis", "tesão", "tesao", "cacete", "vagina",
   "cuzao", "cuzão", "fdp", "pqp", "inferno", "diabo", "satanas", "satanás",
   "droga", "maconha", "cocaina", "cocaína", "crack", "heroina", "heroína",
-  "aborto", "idiota", "cagar", "bunda", "imensa", "sexo", "pinto", "pau",
+  "aborto", "idiota", "cagar", "bunda", "sexo", "pinto", "pau",
   "saco", "bolas", "rola", "baleia"
 ];
 
@@ -32,8 +32,8 @@ function normalizeText(text: string): string {
     normalized = normalized.replace(new RegExp(num, 'g'), letter);
   });
   
-  // Remove espaços, hífens e underscores para detectar palavras disfarçadas
-  normalized = normalized.replace(/[\s\-_]/g, '');
+  // Remove todos os caracteres não alfanuméricos para detectar palavras disfarçadas (ex: p.u-t_a)
+  normalized = normalized.replace(/[^a-z0-9]/g, '');
   
   return normalized;
 }
