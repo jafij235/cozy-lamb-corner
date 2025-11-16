@@ -13,18 +13,25 @@ export const CommunityModeration = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("prayer_requests")
-        .select(`
-          *,
-          profiles:user_id (
-            email,
-            username,
-            avatar_url
-          )
-        `)
+        .select("*")
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data;
+
+      // Fetch profile data for each request
+      const requestsWithProfiles = await Promise.all(
+        data.map(async (request) => {
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select("email, username, avatar_url")
+            .eq("id", request.user_id)
+            .single();
+          
+          return { ...request, profiles: profile };
+        })
+      );
+
+      return requestsWithProfiles;
     },
   });
 

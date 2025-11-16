@@ -9,6 +9,8 @@ interface ProtectedRouteProps {
 export const ProtectedRoute = ({ children, requireAdmin = false }: ProtectedRouteProps) => {
   const { user, isAdmin, loading } = useAuth();
 
+  // CRITICAL: Always show loading state while checking authentication
+  // Never render protected content until we confirm user is authenticated
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -20,13 +22,18 @@ export const ProtectedRoute = ({ children, requireAdmin = false }: ProtectedRout
     );
   }
 
+  // CRITICAL: Redirect to login if not authenticated
+  // This must happen BEFORE any children are rendered
   if (!user) {
     return <Navigate to="/login" replace />;
   }
 
+  // CRITICAL: Check admin status for admin routes
+  // Redirect non-admins away from admin pages
   if (requireAdmin && !isAdmin) {
     return <Navigate to="/home" replace />;
   }
 
+  // Only render children after all authentication checks pass
   return <>{children}</>;
 };
