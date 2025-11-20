@@ -47,8 +47,8 @@ export function containsProfanity(text: string): boolean {
   return profanityList.some(word => {
     const normalizedWord = normalizeText(word);
     
-    // Verifica se a palavra aparece no texto (com ou sem limites de palavra)
-    const regex = new RegExp(normalizedWord, "i");
+    // Use word boundaries to prevent false positives like "assassin" matching "ass"
+    const regex = new RegExp(`\\b${normalizedWord}\\b`, "i");
     return regex.test(normalizedText);
   });
 }

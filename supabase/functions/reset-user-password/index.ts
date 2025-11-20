@@ -13,8 +13,7 @@ Deno.serve(async (req) => {
 
   try {
     const { userId, password } = await req.json();
-
-    console.log('Reset password request for user:', userId);
+    console.log('Password reset request received');
 
     // Validar dados
     if (!userId || !password) {
