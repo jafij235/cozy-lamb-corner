@@ -1,12 +1,14 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Flame } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useCompletions } from "@/hooks/useCompletions";
+import { useMedalAnimation } from "@/hooks/useMedalAnimation";
+import { MedalAnimationOverlay } from "./MedalAnimationOverlay";
 
 export const DailyChallenges = () => {
   const { isCompleted, markComplete } = useCompletions();
+  const { showAnimation, medalInfo, triggerMedalAnimation, hideAnimation } = useMedalAnimation();
 
   const { data: challenges = [] } = useQuery({
     queryKey: ["challenges"],
@@ -24,14 +26,17 @@ export const DailyChallenges = () => {
 
   const handleToggle = async (challengeId: string, checked: boolean) => {
     if (checked) {
-      await markComplete(challengeId, 'challenge');
+      const result = await markComplete(challengeId, 'challenge');
+      if (result.newMedal) {
+        triggerMedalAnimation(result.newMedal.name, result.newMedal.icon);
+      }
     }
   };
 
   if (challenges.length === 0) {
     return (
       <div className="text-center py-12">
-        <Flame className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+        <span className="text-6xl text-muted-foreground mb-4 block">✦</span>
         <p className="text-muted-foreground">
           Nenhum desafio disponível no momento
         </p>
@@ -40,7 +45,14 @@ export const DailyChallenges = () => {
   }
 
   return (
-    <div className="space-y-3">
+    <>
+      <MedalAnimationOverlay
+        show={showAnimation}
+        medalName={medalInfo?.name || ''}
+        medalIcon={medalInfo?.icon || ''}
+        onComplete={hideAnimation}
+      />
+      <div className="space-y-3">
       {challenges.map((challenge) => {
         const challengeCompleted = isCompleted(challenge.id, 'challenge');
         
@@ -81,13 +93,14 @@ export const DailyChallenges = () => {
                   </p>
                 </label>
                 {challengeCompleted && (
-                  <Flame className="w-5 h-5 text-primary animate-pulse flex-shrink-0" />
+                  <span className="text-2xl text-primary animate-pulse flex-shrink-0">✦</span>
                 )}
               </div>
             </CardContent>
           </Card>
         );
       })}
-    </div>
+      </div>
+    </>
   );
 };

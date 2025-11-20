@@ -5,12 +5,15 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { BookOpen, CheckCircle2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useMedalAnimation } from "@/hooks/useMedalAnimation";
+import { MedalAnimationOverlay } from "./MedalAnimationOverlay";
 import { useCompletions } from "@/hooks/useCompletions";
 
 export const DevotionalPlan = () => {
   const [selectedDevotional, setSelectedDevotional] = useState<any>(null);
   const [open, setOpen] = useState(false);
   const { isCompleted, markComplete } = useCompletions();
+  const { showAnimation, medalInfo, triggerMedalAnimation, hideAnimation } = useMedalAnimation();
 
   const { data: devotionals = [] } = useQuery({
     queryKey: ["devotionals"],
@@ -33,7 +36,10 @@ export const DevotionalPlan = () => {
 
   const handleMarkComplete = async () => {
     if (!selectedDevotional) return;
-    await markComplete(selectedDevotional.id, 'devotional');
+    const result = await markComplete(selectedDevotional.id, 'devotional');
+    if (result.newMedal) {
+      triggerMedalAnimation(result.newMedal.name, result.newMedal.icon);
+    }
     setOpen(false);
   };
 
@@ -50,6 +56,12 @@ export const DevotionalPlan = () => {
 
   return (
     <>
+      <MedalAnimationOverlay
+        show={showAnimation}
+        medalName={medalInfo?.name || ''}
+        medalIcon={medalInfo?.icon || ''}
+        onComplete={hideAnimation}
+      />
       <div className="grid gap-4 md:grid-cols-2">
         {devotionals.map((devotional) => {
           const completed = isCompleted(devotional.id, 'devotional');

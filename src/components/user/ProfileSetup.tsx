@@ -15,12 +15,22 @@ const CARTOON_AVATARS = [
   { id: "boy3", url: "https://api.dicebear.com/7.x/adventurer/svg?seed=Max&backgroundColor=ffd5dc", gender: "male" },
   { id: "boy4", url: "https://api.dicebear.com/7.x/adventurer/svg?seed=Leo&backgroundColor=c0aede", gender: "male" },
   { id: "boy5", url: "https://api.dicebear.com/7.x/adventurer/svg?seed=Simon&backgroundColor=ffdfbf", gender: "male" },
+  { id: "boy6", url: "https://api.dicebear.com/7.x/adventurer/svg?seed=Oliver&backgroundColor=b6e3f4", gender: "male" },
+  { id: "boy7", url: "https://api.dicebear.com/7.x/adventurer/svg?seed=Lucas&backgroundColor=ffd5dc", gender: "male" },
+  { id: "boy8", url: "https://api.dicebear.com/7.x/adventurer/svg?seed=Noah&backgroundColor=c0aede", gender: "male" },
+  { id: "boy9", url: "https://api.dicebear.com/7.x/adventurer/svg?seed=Ethan&backgroundColor=d1d4f9", gender: "male" },
+  { id: "boy10", url: "https://api.dicebear.com/7.x/adventurer/svg?seed=Liam&backgroundColor=ffdfbf", gender: "male" },
   // Female avatars - rostos humanos cartoon
   { id: "girl1", url: "https://api.dicebear.com/7.x/adventurer/svg?seed=Luna&backgroundColor=ffd5dc", gender: "female" },
   { id: "girl2", url: "https://api.dicebear.com/7.x/adventurer/svg?seed=Sophie&backgroundColor=c0aede", gender: "female" },
   { id: "girl3", url: "https://api.dicebear.com/7.x/adventurer/svg?seed=Mia&backgroundColor=b6e3f4", gender: "female" },
   { id: "girl4", url: "https://api.dicebear.com/7.x/adventurer/svg?seed=Zoe&backgroundColor=ffdfbf", gender: "female" },
   { id: "girl5", url: "https://api.dicebear.com/7.x/adventurer/svg?seed=Emma&backgroundColor=d1d4f9", gender: "female" },
+  { id: "girl6", url: "https://api.dicebear.com/7.x/adventurer/svg?seed=Olivia&backgroundColor=b6e3f4", gender: "female" },
+  { id: "girl7", url: "https://api.dicebear.com/7.x/adventurer/svg?seed=Ava&backgroundColor=ffd5dc", gender: "female" },
+  { id: "girl8", url: "https://api.dicebear.com/7.x/adventurer/svg?seed=Isabella&backgroundColor=c0aede", gender: "female" },
+  { id: "girl9", url: "https://api.dicebear.com/7.x/adventurer/svg?seed=Charlotte&backgroundColor=ffdfbf", gender: "female" },
+  { id: "girl10", url: "https://api.dicebear.com/7.x/adventurer/svg?seed=Amelia&backgroundColor=d1d4f9", gender: "female" },
 ];
 
 interface ProfileSetupProps {
@@ -117,7 +127,7 @@ export const ProfileSetup = ({ open, onOpenChange, currentUsername, currentAvata
               ))}
             </div>
             <p className="text-xs text-muted-foreground text-center">
-              Escolha um personagem que represente você! ✨
+              Escolha um personagem que represente você!
             </p>
           </div>
 
