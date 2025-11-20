@@ -23,7 +23,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const navigate = useNavigate();
 
   // CRÍTICO: Função para verificar admin status
-  const checkAdminStatus = async (userId: string, email: string) => {
+  const checkAdminStatus = async (userId: string) => {
     try {
       const { data } = await supabase
         .from("user_roles")
@@ -32,8 +32,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         .eq("role", "admin")
         .maybeSingle();
       
-      const emailAllowed = email === "ga.bussines14@gmail.com";
-      return !!data && emailAllowed;
+      return !!data;
     } catch (error) {
       console.error("Error checking admin status:", error);
       return false;
@@ -45,7 +44,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      (event, session) => {
         if (!mounted) return;
         
         console.log('[AUTH] Auth state changed:', event, session?.user?.email);
@@ -53,7 +52,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setUser(session?.user ?? null);
         
         if (session?.user) {
-          // Register login when user signs in
+          // Register login when user signs in (deferred to avoid blocking auth)
           if (event === "SIGNED_IN") {
             setTimeout(async () => {
               try {
@@ -71,16 +70,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             }, 0);
           }
 
-          // Check admin status after a delay to avoid blocking
-          setTimeout(async () => {
+          // Check admin status synchronously
+          checkAdminStatus(session.user.id).then(adminStatus => {
             if (!mounted) return;
-            const adminStatus = await checkAdminStatus(session.user.id, session.user.email || '');
-            console.log('[AUTH] Admin status checked:', adminStatus, 'for email:', session.user.email);
-            if (mounted) {
-              setIsAdmin(adminStatus);
-              setLoading(false);
-            }
-          }, 0);
+            console.log('[AUTH] Admin status checked:', adminStatus, 'for user:', session.user.email);
+            setIsAdmin(adminStatus);
+            setLoading(false);
+          });
         } else {
           console.log('[AUTH] No user, setting isAdmin to false');
           setIsAdmin(false);
@@ -98,8 +94,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setUser(session?.user ?? null);
       
       if (session?.user) {
-        const adminStatus = await checkAdminStatus(session.user.id, session.user.email || '');
-        console.log('[AUTH] Initial admin status:', adminStatus, 'for email:', session.user.email);
+        const adminStatus = await checkAdminStatus(session.user.id);
+        console.log('[AUTH] Initial admin status:', adminStatus, 'for user:', session.user.email);
         if (mounted) {
           setIsAdmin(adminStatus);
           setLoading(false);
