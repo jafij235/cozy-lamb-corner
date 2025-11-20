@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useAudioFeedback } from '@/hooks/useAudioFeedback';
 
 interface MedalAnimationOverlayProps {
   show: boolean;
@@ -14,9 +15,11 @@ export const MedalAnimationOverlay = ({
   onComplete 
 }: MedalAnimationOverlayProps) => {
   const [confetti, setConfetti] = useState<Array<{ id: number; left: number; delay: number }>>([]);
+  const { playSuccess } = useAudioFeedback();
 
   useEffect(() => {
     if (show) {
+      playSuccess();
       // Generate confetti particles
       const particles = Array.from({ length: 80 }, (_, i) => ({
         id: i,
@@ -32,7 +35,7 @@ export const MedalAnimationOverlay = ({
 
       return () => clearTimeout(timer);
     }
-  }, [show]);
+  }, [show, playSuccess]);
 
   if (!show) return null;
 
