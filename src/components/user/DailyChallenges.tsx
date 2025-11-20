@@ -1,13 +1,12 @@
-import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Flame } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { useCompletions } from "@/hooks/useCompletions";
 
 export const DailyChallenges = () => {
-  const [completed, setCompleted] = useState<Set<string>>(new Set());
+  const { isCompleted, markComplete } = useCompletions();
 
   const { data: challenges = [] } = useQuery({
     queryKey: ["challenges"],
@@ -23,17 +22,10 @@ export const DailyChallenges = () => {
     },
   });
 
-  const handleToggle = (challengeId: string, checked: boolean) => {
-    const newCompleted = new Set(completed);
+  const handleToggle = async (challengeId: string, checked: boolean) => {
     if (checked) {
-      newCompleted.add(challengeId);
-      toast.success("Desafio concluído! 🎉", {
-        description: "Continue firme na sua jornada!",
-      });
-    } else {
-      newCompleted.delete(challengeId);
+      await markComplete(challengeId, 'challenge');
     }
-    setCompleted(newCompleted);
   };
 
   if (challenges.length === 0) {
@@ -50,19 +42,20 @@ export const DailyChallenges = () => {
   return (
     <div className="space-y-3">
       {challenges.map((challenge) => {
-        const isCompleted = completed.has(challenge.id);
+        const challengeCompleted = isCompleted(challenge.id, 'challenge');
+        
         return (
           <Card
             key={challenge.id}
             className={`transition-all ${
-              isCompleted ? "bg-primary/5 border-primary/30" : ""
+              challengeCompleted ? "bg-primary/5 border-primary/30 border-2" : ""
             }`}
           >
             <CardContent className="p-4">
               <div className="flex items-start gap-3">
                 <Checkbox
                   id={challenge.id}
-                  checked={isCompleted}
+                  checked={challengeCompleted}
                   onCheckedChange={(checked) =>
                     handleToggle(challenge.id, checked as boolean)
                   }
@@ -74,20 +67,20 @@ export const DailyChallenges = () => {
                 >
                   <h4
                     className={`font-semibold mb-1 ${
-                      isCompleted ? "line-through text-muted-foreground" : ""
+                      challengeCompleted ? "line-through text-muted-foreground" : ""
                     }`}
                   >
                     {challenge.title}
                   </h4>
                   <p
                     className={`text-sm ${
-                      isCompleted ? "text-muted-foreground" : "text-muted-foreground"
+                      challengeCompleted ? "text-muted-foreground" : "text-muted-foreground"
                     }`}
                   >
                     {challenge.description}
                   </p>
                 </label>
-                {isCompleted && (
+                {challengeCompleted && (
                   <Flame className="w-5 h-5 text-primary animate-pulse flex-shrink-0" />
                 )}
               </div>

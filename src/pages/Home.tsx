@@ -2,12 +2,13 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Heart, BookOpen, Flame, Music, Users, LogOut, UserCircle } from "lucide-react";
+import { Heart, BookOpen, Flame, Music, Users, LogOut, UserCircle, Award } from "lucide-react";
 import { PrayerList } from "@/components/user/PrayerList";
 import { DevotionalPlan } from "@/components/user/DevotionalPlan";
 import { DailyChallenges } from "@/components/user/DailyChallenges";
 import { PrayerCommunity } from "@/components/user/PrayerCommunity";
 import { ProfileSetup } from "@/components/user/ProfileSetup";
+import { MedalCollection } from "@/components/user/MedalCollection";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 
@@ -62,7 +63,7 @@ const Home = () => {
       <main className="container py-6 max-w-4xl">
         <div className="mb-8 text-center">
           <h1 className="text-3xl font-bold mb-2 text-foreground">
-            Olá! 👋
+            Olá!
           </h1>
           <p className="text-muted-foreground">
             Bem-vindo à sua jornada de fé
@@ -70,7 +71,7 @@ const Home = () => {
         </div>
 
         <Tabs defaultValue="oracoes" className="w-full">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="oracoes">
               <Music className="w-4 h-4 mr-2" />
               Orações
@@ -90,6 +91,10 @@ const Home = () => {
             <TabsTrigger value="comunidade">
               <Heart className="w-4 h-4 mr-2" />
               Comunidade
+            </TabsTrigger>
+            <TabsTrigger value="medalhas">
+              <Award className="w-4 h-4 mr-2" />
+              Medalhas
             </TabsTrigger>
           </TabsList>
 
@@ -111,6 +116,10 @@ const Home = () => {
 
           <TabsContent value="comunidade" className="mt-6">
             <PrayerCommunity />
+          </TabsContent>
+
+          <TabsContent value="medalhas" className="mt-6">
+            <MedalCollection />
           </TabsContent>
         </Tabs>
       </main>

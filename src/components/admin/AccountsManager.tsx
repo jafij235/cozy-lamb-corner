@@ -31,12 +31,22 @@ export const AccountsManager = () => {
 
   const resetPasswordMutation = useMutation({
     mutationFn: async ({ userId, password }: { userId: string; password: string }) => {
-      // Usar API admin do Supabase para resetar senha
-      const { data, error } = await supabase.auth.admin.updateUserById(userId, {
-        password: password,
+      // Chamar edge function para resetar senha (requer service role)
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        throw new Error("Não autenticado");
+      }
+
+      const { data, error } = await supabase.functions.invoke('reset-user-password', {
+        body: { userId, password },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
       });
 
       if (error) throw error;
+      if (data.error) throw new Error(data.error);
       return data;
     },
     onSuccess: () => {

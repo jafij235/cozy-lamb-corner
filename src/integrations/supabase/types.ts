@@ -237,6 +237,51 @@ export type Database = {
           },
         ]
       }
+      user_completions: {
+        Row: {
+          completed_at: string
+          id: string
+          item_id: string
+          item_type: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string
+          id?: string
+          item_id: string
+          item_type: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string
+          id?: string
+          item_id?: string
+          item_type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_medals: {
+        Row: {
+          earned_at: string
+          id: string
+          medal_tier: string
+          user_id: string
+        }
+        Insert: {
+          earned_at?: string
+          id?: string
+          medal_tier: string
+          user_id: string
+        }
+        Update: {
+          earned_at?: string
+          id?: string
+          medal_tier?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
@@ -251,6 +296,30 @@ export type Database = {
         Update: {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_settings: {
+        Row: {
+          created_at: string
+          display_medal: string | null
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          display_medal?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          display_medal?: string | null
+          id?: string
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
@@ -271,6 +340,7 @@ export type Database = {
       }
     }
     Functions: {
+      check_and_grant_medals: { Args: { _user_id: string }; Returns: undefined }
       contains_profanity: { Args: { _t: string }; Returns: boolean }
       has_role: {
         Args: {

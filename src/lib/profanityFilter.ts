@@ -1,11 +1,14 @@
 // Lista de palavras proibidas em português
 const profanityList = [
-  "merda", "bosta", "porra", "caralho", "puta", "putaria", "foda", "foder", "foda-se", "fodase",
-  "cu", "buceta", "penis", "piroca", "pênis", "tesão", "tesao", "cacete", "vagina",
-  "cuzao", "cuzão", "fdp", "pqp", "inferno", "diabo", "satanas", "satanás",
-  "droga", "maconha", "cocaina", "cocaína", "crack", "heroina", "heroína",
-  "aborto", "idiota", "cagar", "bunda", "sexo", "pinto", "pau",
-  "saco", "bolas", "rola", "baleia"
+  "merda", "bosta", "porra", "caralho", "puta", "putaria", "foda", "foder", "foda-se", "fodase", "fds",
+  "cu", "buceta", "penis", "piroca", "pênis", "tesão", "tesao", "cacete", "vagina", "cuzao", "cuzão", "cuzinho", "rabo",
+  "fdp", "pqp", "vsf", "vtnc", "krl", "krh", "crl", "crh",
+  "inferno", "diabo", "satanas", "satanás", "demonio", "capeta",
+  "droga", "maconha", "cocaina", "cocaína", "crack", "heroina", "heroína", "beck", "baseado",
+  "aborto", "idiota", "cagar", "merdar", "bunda", "bundao", "sexo", "pinto", "pau", "pirocao", "pirocudo",
+  "saco", "bolas", "rola", "baleia", "vaca", "porca", "cadela", "bicha", "viado", "gay", "sapatao",
+  "arrombado", "escroto", "babaca", "otario", "trouxa", "imbecil", "burro", "estupido",
+  "rapariga", "prostituta", "meretriz", "vadia", "vagabunda", "safada", "galinha"
 ];
 
 // Mapa de substituições de números por letras
