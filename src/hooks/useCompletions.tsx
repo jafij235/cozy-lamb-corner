@@ -29,11 +29,18 @@ export interface NewMedalResult {
   newMedal: Medal | null;
 }
 
+interface CustomMedal {
+  id: string;
+  custom_name: string;
+  custom_icon: string;
+}
+
 export const useCompletions = () => {
   const { user } = useAuth();
   const [completedItems, setCompletedItems] = useState<Set<string>>(new Set());
   const [medals, setMedals] = useState<MedalTier[]>([]);
-  const [displayMedal, setDisplayMedal] = useState<MedalTier | null>(null);
+  const [customMedals, setCustomMedals] = useState<CustomMedal[]>([]);
+  const [displayMedal, setDisplayMedal] = useState<string | null>(null);
   const [totalCompletions, setTotalCompletions] = useState(0);
   const [loading, setLoading] = useState(true);
 
@@ -72,13 +79,22 @@ export const useCompletions = () => {
     try {
       const { data, error } = await supabase
         .from('user_medals')
-        .select('medal_tier')
+        .select('*')
         .eq('user_id', user.id)
         .order('earned_at', { ascending: true });
 
       if (error) throw error;
 
-      setMedals(data?.map(m => m.medal_tier as MedalTier) || []);
+      // Separar medalhas padrão e personalizadas
+      const standardMedals = data?.filter(m => !m.custom_name).map(m => m.medal_tier as MedalTier) || [];
+      const customMedalsList = data?.filter(m => m.custom_name).map(m => ({
+        id: m.id,
+        custom_name: m.custom_name!,
+        custom_icon: m.custom_icon!,
+      })) || [];
+
+      setMedals(standardMedals);
+      setCustomMedals(customMedalsList);
     } catch (error) {
       console.error('Erro ao carregar medalhas:', error);
     }
@@ -96,7 +112,7 @@ export const useCompletions = () => {
 
       if (error && error.code !== 'PGRST116') throw error;
 
-      setDisplayMedal(data?.display_medal as MedalTier || null);
+      setDisplayMedal(data?.display_medal || null);
     } catch (error) {
       console.error('Erro ao carregar medalha de exibição:', error);
     } finally {
@@ -166,7 +182,7 @@ export const useCompletions = () => {
     }
   };
 
-  const setMedalToDisplay = async (medal: MedalTier | null) => {
+  const setMedalToDisplay = async (medal: string | null) => {
     if (!user) return;
 
     try {
@@ -198,6 +214,7 @@ export const useCompletions = () => {
     isCompleted,
     markComplete,
     medals,
+    customMedals,
     displayMedal,
     setMedalToDisplay,
     totalCompletions,

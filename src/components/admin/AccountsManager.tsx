@@ -8,10 +8,14 @@ import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Key, Mail, User } from "lucide-react";
+import { Key, Mail, User, Award, Trophy } from "lucide-react";
+import { AdminAwardMedal } from "./AdminAwardMedal";
+import { AdminAwardAchievement } from "./AdminAwardAchievement";
 
 export const AccountsManager = () => {
   const [resetPasswordOpen, setResetPasswordOpen] = useState(false);
+  const [awardMedalOpen, setAwardMedalOpen] = useState(false);
+  const [awardAchievementOpen, setAwardAchievementOpen] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState<string>("");
   const [newPassword, setNewPassword] = useState("");
   const queryClient = useQueryClient();
@@ -125,17 +129,41 @@ export const AccountsManager = () => {
                 <TableCell>{account.username || "N/A"}</TableCell>
                 <TableCell>{new Date(account.created_at).toLocaleDateString("pt-BR")}</TableCell>
                 <TableCell>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      setSelectedUserId(account.id);
-                      setResetPasswordOpen(true);
-                    }}
-                  >
-                    <Key className="w-4 h-4 mr-2" />
-                    Resetar Senha
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setSelectedUserId(account.id);
+                        setResetPasswordOpen(true);
+                      }}
+                    >
+                      <Key className="w-4 h-4 mr-2" />
+                      Resetar Senha
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setSelectedUserId(account.id);
+                        setAwardMedalOpen(true);
+                      }}
+                    >
+                      <Award className="w-4 h-4 mr-2" />
+                      Medalha
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setSelectedUserId(account.id);
+                        setAwardAchievementOpen(true);
+                      }}
+                    >
+                      <Trophy className="w-4 h-4 mr-2" />
+                      Conquista
+                    </Button>
+                  </div>
                 </TableCell>
               </TableRow>
             ))}
@@ -172,6 +200,18 @@ export const AccountsManager = () => {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+
+        <AdminAwardMedal 
+          open={awardMedalOpen} 
+          onOpenChange={setAwardMedalOpen}
+          userId={selectedUserId}
+        />
+
+        <AdminAwardAchievement 
+          open={awardAchievementOpen} 
+          onOpenChange={setAwardAchievementOpen}
+          userId={selectedUserId}
+        />
       </CardContent>
     </Card>
   );

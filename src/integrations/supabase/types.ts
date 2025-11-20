@@ -325,18 +325,27 @@ export type Database = {
       }
       user_medals: {
         Row: {
+          awarded_by: string | null
+          custom_icon: string | null
+          custom_name: string | null
           earned_at: string
           id: string
           medal_tier: string
           user_id: string
         }
         Insert: {
+          awarded_by?: string | null
+          custom_icon?: string | null
+          custom_name?: string | null
           earned_at?: string
           id?: string
           medal_tier: string
           user_id: string
         }
         Update: {
+          awarded_by?: string | null
+          custom_icon?: string | null
+          custom_name?: string | null
           earned_at?: string
           id?: string
           medal_tier?: string
