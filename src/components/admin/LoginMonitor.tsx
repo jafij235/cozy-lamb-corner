@@ -19,12 +19,16 @@ export const LoginMonitor = () => {
   const { data: recentLogins } = useQuery({
     queryKey: ["recent-logins"],
     queryFn: async () => {
+      // Pegar logins de hoje
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
       const { data, error } = await supabase
         .from("login_sessions")
         .select("*, profiles:user_id(email, username)")
-        .eq("is_active", true)
+        .gte("login_at", today.toISOString())
         .order("login_at", { ascending: false })
-        .limit(20);
+        .limit(50);
 
       if (error) throw error;
       return data;

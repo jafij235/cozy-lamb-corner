@@ -5,10 +5,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { useCompletions } from "@/hooks/useCompletions";
 import { useMedalAnimation } from "@/hooks/useMedalAnimation";
 import { MedalAnimationOverlay } from "./MedalAnimationOverlay";
+import { useAchievements } from "@/hooks/useAchievements";
+import { AchievementAnimationOverlay } from "./AchievementAnimationOverlay";
 
 export const DailyChallenges = () => {
   const { isCompleted, markComplete } = useCompletions();
   const { showAnimation, medalInfo, triggerMedalAnimation, hideAnimation } = useMedalAnimation();
+  const { checkAchievements, newAchievement, clearNewAchievement } = useAchievements();
 
   const { data: challenges = [] } = useQuery({
     queryKey: ["challenges"],
@@ -30,6 +33,7 @@ export const DailyChallenges = () => {
       if (result.newMedal) {
         triggerMedalAnimation(result.newMedal.name, result.newMedal.icon, result.newMedal.tier);
       }
+      checkAchievements();
     }
   };
 
@@ -51,6 +55,13 @@ export const DailyChallenges = () => {
         medalName={medalInfo?.name || ''}
         medalIcon={medalInfo?.icon || ''}
         onComplete={hideAnimation}
+      />
+      <AchievementAnimationOverlay
+        show={!!newAchievement}
+        achievementName={newAchievement?.name || ''}
+        achievementIcon={newAchievement?.icon || ''}
+        achievementDescription={newAchievement?.description || ''}
+        onComplete={clearNewAchievement}
       />
       <div className="space-y-3">
       {challenges.map((challenge) => {

@@ -8,12 +8,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { useMedalAnimation } from "@/hooks/useMedalAnimation";
 import { MedalAnimationOverlay } from "./MedalAnimationOverlay";
 import { useCompletions } from "@/hooks/useCompletions";
+import { useAchievements } from "@/hooks/useAchievements";
+import { AchievementAnimationOverlay } from "./AchievementAnimationOverlay";
 
 export const DevotionalPlan = () => {
   const [selectedDevotional, setSelectedDevotional] = useState<any>(null);
   const [open, setOpen] = useState(false);
   const { isCompleted, markComplete } = useCompletions();
   const { showAnimation, medalInfo, triggerMedalAnimation, hideAnimation } = useMedalAnimation();
+  const { checkAchievements, newAchievement, clearNewAchievement } = useAchievements();
 
   const { data: devotionals = [] } = useQuery({
     queryKey: ["devotionals"],
@@ -40,6 +43,7 @@ export const DevotionalPlan = () => {
     if (result.newMedal) {
       triggerMedalAnimation(result.newMedal.name, result.newMedal.icon, result.newMedal.tier);
     }
+    checkAchievements();
     setOpen(false);
   };
 
@@ -61,6 +65,13 @@ export const DevotionalPlan = () => {
         medalName={medalInfo?.name || ''}
         medalIcon={medalInfo?.icon || ''}
         onComplete={hideAnimation}
+      />
+      <AchievementAnimationOverlay
+        show={!!newAchievement}
+        achievementName={newAchievement?.name || ''}
+        achievementIcon={newAchievement?.icon || ''}
+        achievementDescription={newAchievement?.description || ''}
+        onComplete={clearNewAchievement}
       />
       <div className="grid gap-4 md:grid-cols-2">
         {devotionals.map((devotional) => {
