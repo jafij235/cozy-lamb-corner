@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Heart, BookOpen, Flame, Music, Users, LogOut, UserCircle, Award } from "lucide-react";
+import { BookOpen, LogOut, UserCircle } from "lucide-react";
 import { PrayerList } from "@/components/user/PrayerList";
 import { DevotionalPlan } from "@/components/user/DevotionalPlan";
 import { DailyChallenges } from "@/components/user/DailyChallenges";
@@ -43,7 +43,7 @@ const Home = () => {
       <header className="sticky top-0 z-50 w-full border-b bg-card/50 backdrop-blur supports-[backdrop-filter]:bg-card/80">
         <div className="container flex h-16 items-center justify-between">
           <div className="flex items-center gap-2 text-primary">
-            <Heart className="w-6 h-6" />
+            <span className="text-2xl">✦</span>
             <span className="font-semibold text-lg">Jornada Espiritual</span>
           </div>
           <div className="flex items-center gap-2">
@@ -73,11 +73,11 @@ const Home = () => {
         <Tabs defaultValue="oracoes" className="w-full">
           <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="oracoes">
-              <Music className="w-4 h-4 mr-2" />
+              <span className="mr-2">♪</span>
               Orações
             </TabsTrigger>
             <TabsTrigger value="familia">
-              <Users className="w-4 h-4 mr-2" />
+              <span className="mr-2">⌂</span>
               Família
             </TabsTrigger>
             <TabsTrigger value="devocionais">
@@ -85,15 +85,15 @@ const Home = () => {
               Devocionais
             </TabsTrigger>
             <TabsTrigger value="desafios">
-              <Flame className="w-4 h-4 mr-2" />
+              <span className="mr-2">✦</span>
               Desafios
             </TabsTrigger>
             <TabsTrigger value="comunidade">
-              <Heart className="w-4 h-4 mr-2" />
+              <span className="mr-2">✧</span>
               Comunidade
             </TabsTrigger>
             <TabsTrigger value="medalhas">
-              <Award className="w-4 h-4 mr-2" />
+              <span className="mr-2">◈</span>
               Medalhas
             </TabsTrigger>
           </TabsList>

@@ -25,6 +25,10 @@ export const MEDALS: Medal[] = [
   { tier: 'obsediana', name: 'Obsediana', icon: '◉', requiredCompletions: 100 },
 ];
 
+export interface NewMedalResult {
+  newMedal: Medal | null;
+}
+
 export const useCompletions = () => {
   const { user } = useAuth();
   const [completedItems, setCompletedItems] = useState<Set<string>>(new Set());
@@ -100,7 +104,7 @@ export const useCompletions = () => {
     }
   };
 
-  const markComplete = async (itemId: string, itemType: 'devotional' | 'challenge') => {
+  const markComplete = async (itemId: string, itemType: 'devotional' | 'challenge'): Promise<NewMedalResult> => {
     if (!user) return;
 
     const key = `${itemType}_${itemId}`;
@@ -123,20 +127,42 @@ export const useCompletions = () => {
       setTotalCompletions(newCompleted.size);
 
       // Verificar e conceder medalhas
+      const oldMedalCount = medals.length;
       await supabase.rpc('check_and_grant_medals', { _user_id: user.id });
       
       // Recarregar medalhas
-      await loadMedals();
+      const newMedalsData = await supabase
+        .from('user_medals')
+        .select('medal_tier')
+        .eq('user_id', user.id)
+        .order('earned_at', { ascending: true });
+      
+      const newMedals = newMedalsData.data?.map(m => m.medal_tier as MedalTier) || [];
+      setMedals(newMedals);
+      
+      // Check if new medal was earned
+      const earnedNewMedal = newMedals.length > oldMedalCount;
+      
+      if (earnedNewMedal && newMedals.length > 0) {
+        const latestMedalTier = newMedals[newMedals.length - 1];
+        const medal = MEDALS.find(m => m.tier === latestMedalTier);
+        if (medal) {
+          return { newMedal: medal };
+        }
+      }
 
       toast.success('Concluído!', {
         description: `Total de conclusões: ${newCompleted.size}`,
       });
+      
+      return { newMedal: null };
     } catch (error: any) {
       // Ignorar erro de duplicata (usuário clicou duas vezes)
       if (error.code !== '23505') {
         console.error('Erro ao marcar como concluído:', error);
         toast.error('Erro ao salvar conclusão');
       }
+      return { newMedal: null };
     }
   };
 

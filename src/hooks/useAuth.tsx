@@ -41,10 +41,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   useEffect(() => {
+    let mounted = true;
+
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        setLoading(true);
+        if (!mounted) return;
+        
+        console.log('[AUTH] Auth state changed:', event, session?.user?.email);
         setSession(session);
         setUser(session?.user ?? null);
         
@@ -67,53 +71,51 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             }, 0);
           }
 
-          // Check if user is admin
+          // Check admin status after a delay to avoid blocking
           setTimeout(async () => {
+            if (!mounted) return;
             const adminStatus = await checkAdminStatus(session.user.id, session.user.email || '');
-            setIsAdmin(adminStatus);
-            setLoading(false);
+            console.log('[AUTH] Admin status checked:', adminStatus, 'for email:', session.user.email);
+            if (mounted) {
+              setIsAdmin(adminStatus);
+              setLoading(false);
+            }
           }, 0);
         } else {
+          console.log('[AUTH] No user, setting isAdmin to false');
           setIsAdmin(false);
           setLoading(false);
         }
       }
     );
 
-    // CRÍTICO: Check for existing session E verificar admin status
+    // Check for existing session
     supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (!mounted) return;
+      
+      console.log('[AUTH] Initial session check:', session?.user?.email);
       setSession(session);
       setUser(session?.user ?? null);
       
       if (session?.user) {
         const adminStatus = await checkAdminStatus(session.user.id, session.user.email || '');
-        setIsAdmin(adminStatus);
-      }
-      setLoading(false);
-      
-      if (session?.user) {
-        setTimeout(async () => {
-          try {
-              const { data } = await supabase
-                .from("user_roles")
-                .select("role")
-                .eq("user_id", session.user.id)
-                .eq("role", "admin")
-                .maybeSingle();
-              const emailAllowed = session.user.email === "ga.bussines14@gmail.com";            
-              setIsAdmin(!!data && emailAllowed);
-          } catch (error) {
-            console.error("Error checking admin status:", error);
-            setIsAdmin(false);
-          }
+        console.log('[AUTH] Initial admin status:', adminStatus, 'for email:', session.user.email);
+        if (mounted) {
+          setIsAdmin(adminStatus);
           setLoading(false);
-        }, 0);
+        }
       } else {
-        setLoading(false);
+        if (mounted) {
+          setIsAdmin(false);
+          setLoading(false);
+        }
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const signIn = async (email: string, password: string) => {
