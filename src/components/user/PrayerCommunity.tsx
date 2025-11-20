@@ -34,6 +34,39 @@ export const PrayerCommunity = () => {
   const { playSuccess } = useAudioFeedback();
   const { checkAchievements, newAchievement, clearNewAchievement } = useAchievements();
 
+  // Configurar realtime para atualizar interações
+  useEffect(() => {
+    const channel = supabase
+      .channel('prayer-interactions')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'interactions'
+        },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ["prayer-requests"] });
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'prayer_requests'
+        },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ["prayer-requests"] });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [queryClient]);
+
   const { data: prayerRequests = [] } = useQuery({
     queryKey: ["prayer-requests"],
     queryFn: async () => {
@@ -101,15 +134,25 @@ export const PrayerCommunity = () => {
         .from("interactions")
         .insert([{ prayer_request_id: prayerRequestId, user_id: user.id, type }]);
       
-      if (error) throw error;
+      if (error) {
+        // Se for erro de duplicata, só ignorar
+        if (error.code === '23505') {
+          return;
+        }
+        throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["prayer-requests"] });
-      toast.success("Interação enviada com amor! 💙");
+      playSuccess();
+      toast.success("Interação enviada com amor!");
       checkAchievements();
     },
-    onError: () => {
-      toast.error("Erro ao enviar interação");
+    onError: (error: any) => {
+      // Não mostrar erro se for duplicata
+      if (error?.code !== '23505') {
+        toast.error("Erro ao enviar interação");
+      }
     },
   });
 

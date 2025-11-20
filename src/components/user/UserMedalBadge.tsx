@@ -12,6 +12,27 @@ export const UserMedalBadge = ({ userId }: UserMedalBadgeProps) => {
 
   useEffect(() => {
     loadUserMedal();
+
+    // Configurar realtime para atualizar medalha quando mudar
+    const channel = supabase
+      .channel(`user-medal-${userId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'user_settings',
+          filter: `user_id=eq.${userId}`
+        },
+        () => {
+          loadUserMedal();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [userId]);
 
   const loadUserMedal = async () => {
