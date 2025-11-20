@@ -13,7 +13,6 @@ Deno.serve(async (req) => {
 
   try {
     const { userId, password } = await req.json();
-    console.log('Password reset request received');
 
     // Validar dados
     if (!userId || !password) {
@@ -23,9 +22,9 @@ Deno.serve(async (req) => {
       );
     }
 
-    if (password.length < 6) {
+    if (password.length < 8) {
       return new Response(
-        JSON.stringify({ error: 'Senha deve ter pelo menos 6 caracteres' }),
+        JSON.stringify({ error: 'Senha deve ter pelo menos 8 caracteres' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -55,7 +54,6 @@ Deno.serve(async (req) => {
     const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
 
     if (authError || !user) {
-      console.error('Erro de autenticação:', authError);
       return new Response(
         JSON.stringify({ error: 'Não autorizado' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -70,10 +68,9 @@ Deno.serve(async (req) => {
       .eq('role', 'admin')
       .maybeSingle();
 
-    const isAdmin = !!roleData && user.email === 'ga.bussines14@gmail.com';
+    const isAdmin = !!roleData;
 
     if (!isAdmin) {
-      console.error('User is not authorized as admin');
       return new Response(
         JSON.stringify({ error: 'Acesso negado' }),
         { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -87,14 +84,11 @@ Deno.serve(async (req) => {
     );
 
     if (error) {
-      console.error('Erro ao resetar senha:', error);
       return new Response(
         JSON.stringify({ error: error.message }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
-
-    console.log('Password reset completed successfully');
 
     return new Response(
       JSON.stringify({ success: true, data }),
@@ -102,7 +96,6 @@ Deno.serve(async (req) => {
     );
 
   } catch (error) {
-    console.error('Erro no edge function:', error);
     const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
     return new Response(
       JSON.stringify({ error: errorMessage }),

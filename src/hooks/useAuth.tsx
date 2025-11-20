@@ -47,8 +47,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       (event, session) => {
         if (!mounted) return;
         
-        console.log('[AUTH] Auth state changed:', event, session?.user?.email);
-        
         // Set loading true immediately when auth state changes
         setLoading(true);
         setSession(session);
@@ -68,7 +66,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                   _user_agent: navigator.userAgent,
                 });
               } catch (error) {
-                console.error("Error registering login:", error);
+                // Login registration failed silently
               }
             }, 0);
           }
@@ -76,18 +74,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           // Check admin status synchronously and only set loading false after check completes
           checkAdminStatus(session.user.id).then(adminStatus => {
             if (!mounted) return;
-            console.log('[AUTH] Admin status checked:', adminStatus, 'for user:', session.user.email);
             setIsAdmin(adminStatus);
             setLoading(false);
-          }).catch(error => {
-            console.error('[AUTH] Error checking admin status:', error);
+          }).catch(() => {
             if (mounted) {
               setIsAdmin(false);
               setLoading(false);
             }
           });
         } else {
-          console.log('[AUTH] No user, setting isAdmin to false');
           setIsAdmin(false);
           setLoading(false);
         }
@@ -98,13 +93,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!mounted) return;
       
-      console.log('[AUTH] Initial session check:', session?.user?.email);
       setSession(session);
       setUser(session?.user ?? null);
       
       if (session?.user) {
         const adminStatus = await checkAdminStatus(session.user.id);
-        console.log('[AUTH] Initial admin status:', adminStatus, 'for user:', session.user.email);
         if (mounted) {
           setIsAdmin(adminStatus);
           setLoading(false);

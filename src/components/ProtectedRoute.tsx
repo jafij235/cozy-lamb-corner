@@ -31,12 +31,7 @@ export const ProtectedRoute = ({ children, requireAdmin = false }: ProtectedRout
   // CRITICAL: Check admin status for admin routes
   // Redirect non-admins away from admin pages
   if (requireAdmin && !isAdmin) {
-    console.log('[PROTECTED ROUTE] Access denied to admin route. isAdmin:', isAdmin, 'user email:', user?.email);
     return <Navigate to="/home" replace />;
-  }
-  
-  if (requireAdmin && isAdmin) {
-    console.log('[PROTECTED ROUTE] Admin access granted for:', user?.email);
   }
 
   // Only render children after all authentication checks pass
