@@ -38,7 +38,7 @@ export const DevotionalPlan = () => {
     if (!selectedDevotional) return;
     const result = await markComplete(selectedDevotional.id, 'devotional');
     if (result.newMedal) {
-      triggerMedalAnimation(result.newMedal.name, result.newMedal.icon);
+      triggerMedalAnimation(result.newMedal.name, result.newMedal.icon, result.newMedal.tier);
     }
     setOpen(false);
   };

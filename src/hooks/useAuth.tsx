@@ -48,6 +48,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         if (!mounted) return;
         
         console.log('[AUTH] Auth state changed:', event, session?.user?.email);
+        
+        // Set loading true immediately when auth state changes
+        setLoading(true);
         setSession(session);
         setUser(session?.user ?? null);
         
@@ -70,12 +73,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             }, 0);
           }
 
-          // Check admin status synchronously
+          // Check admin status synchronously and only set loading false after check completes
           checkAdminStatus(session.user.id).then(adminStatus => {
             if (!mounted) return;
             console.log('[AUTH] Admin status checked:', adminStatus, 'for user:', session.user.email);
             setIsAdmin(adminStatus);
             setLoading(false);
+          }).catch(error => {
+            console.error('[AUTH] Error checking admin status:', error);
+            if (mounted) {
+              setIsAdmin(false);
+              setLoading(false);
+            }
           });
         } else {
           console.log('[AUTH] No user, setting isAdmin to false');
