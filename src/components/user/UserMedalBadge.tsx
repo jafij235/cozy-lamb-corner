@@ -37,18 +37,46 @@ export const UserMedalBadge = ({ userId }: UserMedalBadgeProps) => {
 
   const loadUserMedal = async () => {
     try {
-      const { data, error } = await supabase
+      const { data: settings, error: settingsError } = await supabase
         .from('user_settings')
         .select('display_medal')
         .eq('user_id', userId)
         .maybeSingle();
 
-      if (error && error.code !== 'PGRST116') {
-        console.error('Erro ao carregar medalha:', error);
+      if (settingsError && settingsError.code !== 'PGRST116') {
+        console.error('Erro ao carregar medalha:', settingsError);
         return;
       }
 
-      setDisplayMedal(data?.display_medal || null);
+      const medalId = settings?.display_medal;
+      if (!medalId) {
+        setLoading(false);
+        return;
+      }
+
+      // Verificar se é uma medalha padrão
+      const standardMedal = MEDALS.find(m => m.tier === medalId);
+      if (standardMedal) {
+        setDisplayMedal(medalId);
+        setLoading(false);
+        return;
+      }
+
+      // Se não for padrão, buscar medalha personalizada
+      const { data: customMedal, error: customError } = await supabase
+        .from('user_medals')
+        .select('custom_name, custom_icon')
+        .eq('id', medalId)
+        .eq('user_id', userId)
+        .maybeSingle();
+
+      if (customError) {
+        console.error('Erro ao carregar medalha personalizada:', customError);
+      }
+
+      if (customMedal?.custom_name) {
+        setDisplayMedal(medalId);
+      }
     } catch (error) {
       console.error('Erro ao carregar medalha:', error);
     } finally {
@@ -58,15 +86,26 @@ export const UserMedalBadge = ({ userId }: UserMedalBadgeProps) => {
 
   if (loading || !displayMedal) return null;
 
-  const medal = MEDALS.find(m => m.tier === displayMedal);
-  if (!medal) return null;
+  // Buscar medalha padrão
+  const standardMedal = MEDALS.find(m => m.tier === displayMedal);
+  if (standardMedal) {
+    return (
+      <span 
+        className="inline-flex items-center justify-center w-6 h-6 text-sm font-bold text-primary"
+        title={standardMedal.name}
+      >
+        {standardMedal.icon}
+      </span>
+    );
+  }
 
+  // Se não for padrão, renderizar ícone personalizado
+  // (o ícone e nome já foram carregados no loadUserMedal)
   return (
     <span 
       className="inline-flex items-center justify-center w-6 h-6 text-sm font-bold text-primary"
-      title={medal.name}
     >
-      {medal.icon}
+      ⭐
     </span>
   );
 };
