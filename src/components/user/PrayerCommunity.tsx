@@ -11,6 +11,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { containsProfanity } from "@/lib/profanityFilter";
 import { useAudioFeedback } from "@/hooks/useAudioFeedback";
+import { UserMedalBadge } from "./UserMedalBadge";
 
 const INTERACTIONS = [
   { type: "pray", label: "Estou orando", icon: Heart },
@@ -250,8 +251,9 @@ export const PrayerCommunity = () => {
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-foreground">
+                  <p className="font-semibold text-foreground flex items-center gap-2">
                     {request.profiles?.username || "Usuário"}
+                    <UserMedalBadge userId={request.user_id} />
                   </p>
                   <p className="text-xs text-muted-foreground">
                     {new Date(request.created_at).toLocaleDateString("pt-BR", {

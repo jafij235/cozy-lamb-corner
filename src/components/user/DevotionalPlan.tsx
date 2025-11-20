@@ -5,11 +5,12 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { BookOpen, CheckCircle2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { useCompletions } from "@/hooks/useCompletions";
 
 export const DevotionalPlan = () => {
   const [selectedDevotional, setSelectedDevotional] = useState<any>(null);
   const [open, setOpen] = useState(false);
+  const { isCompleted, markComplete } = useCompletions();
 
   const { data: devotionals = [] } = useQuery({
     queryKey: ["devotionals"],
@@ -30,10 +31,9 @@ export const DevotionalPlan = () => {
     setOpen(true);
   };
 
-  const handleMarkComplete = () => {
-    toast.success("Devocional marcado como concluído! 🙏", {
-      description: "Continue sua jornada espiritual amanhã",
-    });
+  const handleMarkComplete = async () => {
+    if (!selectedDevotional) return;
+    await markComplete(selectedDevotional.id, 'devotional');
     setOpen(false);
   };
 
@@ -51,25 +51,36 @@ export const DevotionalPlan = () => {
   return (
     <>
       <div className="grid gap-4 md:grid-cols-2">
-        {devotionals.map((devotional) => (
-          <Card
-            key={devotional.id}
-            className="cursor-pointer hover:shadow-md transition-all hover:scale-[1.02]"
-            onClick={() => handleOpen(devotional)}
-          >
-            <CardContent className="p-6">
-              <div className="flex items-start gap-3">
-                <BookOpen className="w-6 h-6 text-primary mt-1" />
-                <div>
-                  <h3 className="font-semibold text-lg mb-2">{devotional.title}</h3>
-                  <p className="text-sm text-muted-foreground line-clamp-3">
-                    {devotional.content}
-                  </p>
+        {devotionals.map((devotional) => {
+          const completed = isCompleted(devotional.id, 'devotional');
+          
+          return (
+            <Card
+              key={devotional.id}
+              className={`cursor-pointer hover:shadow-md transition-all hover:scale-[1.02] ${
+                completed ? 'border-primary border-2' : ''
+              }`}
+              onClick={() => handleOpen(devotional)}
+            >
+              <CardContent className="p-6">
+                <div className="flex items-start gap-3">
+                  <BookOpen className="w-6 h-6 text-primary mt-1" />
+                  <div className="flex-1">
+                    <h3 className={`font-semibold text-lg mb-2 flex items-center gap-2 ${
+                      completed ? 'line-through text-muted-foreground' : ''
+                    }`}>
+                      {devotional.title}
+                      {completed && <span className="text-primary">✓</span>}
+                    </h3>
+                    <p className="text-sm text-muted-foreground line-clamp-3">
+                      {devotional.content}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
 
       <Dialog open={open} onOpenChange={setOpen}>
