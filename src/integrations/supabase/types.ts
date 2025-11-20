@@ -342,6 +342,18 @@ export type Database = {
     Functions: {
       check_and_grant_medals: { Args: { _user_id: string }; Returns: undefined }
       contains_profanity: { Args: { _t: string }; Returns: boolean }
+      get_user_login_stats: {
+        Args: never
+        Returns: {
+          email: string
+          ip_addresses: string[]
+          last_login: string
+          total_logins: number
+          unique_ips: number
+          user_id: string
+          username: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

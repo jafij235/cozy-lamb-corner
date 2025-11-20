@@ -9,9 +9,7 @@ export const LoginMonitor = () => {
   const { data: loginStats, isLoading } = useQuery({
     queryKey: ["login-stats"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("user_login_stats")
-        .select("*");
+      const { data, error } = await supabase.rpc("get_user_login_stats");
 
       if (error) throw error;
       return data;
