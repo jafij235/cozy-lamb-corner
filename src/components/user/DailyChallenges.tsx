@@ -28,7 +28,7 @@ export const DailyChallenges = () => {
     if (checked) {
       const result = await markComplete(challengeId, 'challenge');
       if (result.newMedal) {
-        triggerMedalAnimation(result.newMedal.name, result.newMedal.icon);
+        triggerMedalAnimation(result.newMedal.name, result.newMedal.icon, result.newMedal.tier);
       }
     }
   };

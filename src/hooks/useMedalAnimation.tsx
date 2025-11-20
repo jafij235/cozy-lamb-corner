@@ -3,13 +3,13 @@ import { useAudioFeedback } from './useAudioFeedback';
 
 export const useMedalAnimation = () => {
   const [showAnimation, setShowAnimation] = useState(false);
-  const [medalInfo, setMedalInfo] = useState<{ name: string; icon: string } | null>(null);
-  const { playSuccess } = useAudioFeedback();
+  const [medalInfo, setMedalInfo] = useState<{ name: string; icon: string; tier: string } | null>(null);
+  const { playMedalSound } = useAudioFeedback();
 
-  const triggerMedalAnimation = (medalName: string, medalIcon: string) => {
-    setMedalInfo({ name: medalName, icon: medalIcon });
+  const triggerMedalAnimation = (medalName: string, medalIcon: string, medalTier: string) => {
+    setMedalInfo({ name: medalName, icon: medalIcon, tier: medalTier });
     setShowAnimation(true);
-    playSuccess();
+    playMedalSound(medalTier);
     
     // Auto-hide after 4 seconds
     setTimeout(() => {
