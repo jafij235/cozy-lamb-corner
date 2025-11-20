@@ -74,7 +74,7 @@ Deno.serve(async (req) => {
     const isAdmin = !!roleData && user.email === 'ga.bussines14@gmail.com';
 
     if (!isAdmin) {
-      console.error('Usuário não é admin:', user.email);
+      console.error('User is not authorized as admin');
       return new Response(
         JSON.stringify({ error: 'Acesso negado' }),
         { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -95,7 +95,7 @@ Deno.serve(async (req) => {
       );
     }
 
-    console.log('Senha resetada com sucesso para usuário:', userId);
+    console.log('Password reset completed successfully');
 
     return new Response(
       JSON.stringify({ success: true, data }),
