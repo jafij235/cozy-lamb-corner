@@ -1,22 +1,28 @@
 import { useEffect, useState } from 'react';
+import { useAudioFeedback } from '@/hooks/useAudioFeedback';
 
-interface MedalAnimationOverlayProps {
+interface AchievementAnimationOverlayProps {
   show: boolean;
-  medalName: string;
-  medalIcon: string;
+  achievementName: string;
+  achievementIcon: string;
+  achievementDescription: string;
   onComplete: () => void;
 }
 
-export const MedalAnimationOverlay = ({ 
+export const AchievementAnimationOverlay = ({ 
   show, 
-  medalName, 
-  medalIcon,
+  achievementName, 
+  achievementIcon,
+  achievementDescription,
   onComplete 
-}: MedalAnimationOverlayProps) => {
+}: AchievementAnimationOverlayProps) => {
   const [confetti, setConfetti] = useState<Array<{ id: number; left: number; delay: number }>>([]);
+  const { playSuccess } = useAudioFeedback();
 
   useEffect(() => {
     if (show) {
+      playSuccess();
+      
       // Generate confetti particles
       const particles = Array.from({ length: 80 }, (_, i) => ({
         id: i,
@@ -26,13 +32,21 @@ export const MedalAnimationOverlay = ({
       setConfetti(particles);
 
       // Auto-hide confetti after 3 seconds
-      const timer = setTimeout(() => {
+      const confettiTimer = setTimeout(() => {
         setConfetti([]);
       }, 3000);
 
-      return () => clearTimeout(timer);
+      // Auto-close overlay after 4 seconds
+      const overlayTimer = setTimeout(() => {
+        onComplete();
+      }, 4000);
+
+      return () => {
+        clearTimeout(confettiTimer);
+        clearTimeout(overlayTimer);
+      };
     }
-  }, [show]);
+  }, [show, playSuccess, onComplete]);
 
   if (!show) return null;
 
@@ -55,27 +69,27 @@ export const MedalAnimationOverlay = ({
         />
       ))}
 
-      {/* Medal Display */}
+      {/* Achievement Display */}
       <div className="relative animate-scale-in">
         {/* Glow effect */}
         <div className="absolute inset-0 animate-pulse-glow">
           <div className="w-48 h-48 rounded-full bg-primary/20 blur-3xl" />
         </div>
 
-        {/* Medal card */}
-        <div className="relative bg-card border-2 border-primary rounded-2xl p-8 shadow-2xl text-center space-y-4 animate-bounce-in">
+        {/* Achievement card */}
+        <div className="relative bg-card border-2 border-primary rounded-2xl p-8 shadow-2xl text-center space-y-4 animate-bounce-in max-w-md">
           <div className="text-7xl animate-rotate-badge">
-            {medalIcon}
+            {achievementIcon}
           </div>
           <div className="space-y-2">
             <h2 className="text-2xl font-bold text-primary animate-slide-up">
-              Nova Medalha!
+              🎉 Nova Conquista!
             </h2>
             <p className="text-3xl font-bold text-foreground animate-slide-up" style={{ animationDelay: '0.1s' }}>
-              {medalName}
+              {achievementName}
             </p>
             <p className="text-sm text-muted-foreground animate-fade-in" style={{ animationDelay: '0.2s' }}>
-              Parabéns pela sua conquista!
+              {achievementDescription}
             </p>
           </div>
           

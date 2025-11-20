@@ -12,6 +12,9 @@ import { toast } from "sonner";
 import { containsProfanity } from "@/lib/profanityFilter";
 import { useAudioFeedback } from "@/hooks/useAudioFeedback";
 import { UserMedalBadge } from "./UserMedalBadge";
+import { useAchievements } from "@/hooks/useAchievements";
+import { AchievementAnimationOverlay } from "./AchievementAnimationOverlay";
+import { useEffect } from "react";
 
 const INTERACTIONS = [
   { type: "pray", label: "Estou orando", icon: Heart },
@@ -29,6 +32,7 @@ export const PrayerCommunity = () => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const { playSuccess } = useAudioFeedback();
+  const { checkAchievements, newAchievement, clearNewAchievement } = useAchievements();
 
   const { data: prayerRequests = [] } = useQuery({
     queryKey: ["prayer-requests"],
@@ -82,6 +86,7 @@ export const PrayerCommunity = () => {
       toast.success("Pedido de oração publicado!");
       setOpen(false);
       setContent("");
+      checkAchievements();
     },
     onError: () => {
       toast.error("Erro ao publicar pedido");
@@ -101,6 +106,7 @@ export const PrayerCommunity = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["prayer-requests"] });
       toast.success("Interação enviada com amor! 💙");
+      checkAchievements();
     },
     onError: () => {
       toast.error("Erro ao enviar interação");
@@ -184,6 +190,13 @@ export const PrayerCommunity = () => {
 
   return (
     <div className="space-y-4">
+      <AchievementAnimationOverlay
+        show={!!newAchievement}
+        achievementName={newAchievement?.name || ''}
+        achievementIcon={newAchievement?.icon || ''}
+        achievementDescription={newAchievement?.description || ''}
+        onComplete={clearNewAchievement}
+      />
       <Card className="hover-lift">
         <CardHeader>
           <div className="flex items-center justify-between">

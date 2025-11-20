@@ -9,6 +9,7 @@ import { DailyChallenges } from "@/components/user/DailyChallenges";
 import { PrayerCommunity } from "@/components/user/PrayerCommunity";
 import { ProfileSetup } from "@/components/user/ProfileSetup";
 import { MedalCollection } from "@/components/user/MedalCollection";
+import { AchievementDisplay } from "@/components/user/AchievementDisplay";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 
@@ -71,7 +72,7 @@ const Home = () => {
         </div>
 
         <Tabs defaultValue="oracoes" className="w-full">
-          <TabsList className="grid w-full grid-cols-6">
+          <TabsList className="grid w-full grid-cols-7">
             <TabsTrigger value="oracoes">
               <span className="mr-2">♪</span>
               Orações
@@ -95,6 +96,10 @@ const Home = () => {
             <TabsTrigger value="medalhas">
               <span className="mr-2">◈</span>
               Medalhas
+            </TabsTrigger>
+            <TabsTrigger value="conquistas">
+              <span className="mr-2">🏆</span>
+              Conquistas
             </TabsTrigger>
           </TabsList>
 
@@ -120,6 +125,10 @@ const Home = () => {
 
           <TabsContent value="medalhas" className="mt-6">
             <MedalCollection />
+          </TabsContent>
+
+          <TabsContent value="conquistas" className="mt-6">
+            <AchievementDisplay />
           </TabsContent>
         </Tabs>
       </main>
